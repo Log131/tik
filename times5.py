@@ -25,8 +25,9 @@ async def tests():
 
     dates = datetime.datetime.now().strftime('%Y-%m-%d %H-%M')
     for i in s_:
+        print(i)
         s = await bot.get_chat_member(chat_id=-1001791109996, user_id=i[0])
-        if s.status in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and i[1] <= dates and i[2] == 0:
+        if s.status in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and dates >= i[1] and i[2] == 0:
             try:
 
 
@@ -34,9 +35,9 @@ async def tests():
                 async with aiosqlite.connect('teleg.db') as tc:
                     await tc.execute('UPDATE users SET sends = 5 WHERE userid = ?', (i[0],))
                     await tc.commit()
-                await bot.send_message(chat_id=i[0], text='Спасибо за подписку \n https://youtu.be/iNwjdSx1VdY?si=1B0Ebk-vKEp4dyI2')
-            except:
-                pass
+                await bot.send_message(chat_id=i[0], text='https://youtu.be/iNwjdSx1VdY?si=1B0Ebk-vKEp4dyI2')
+            except Exception as e:
+                print(e)
         
 async def tests_5():
 
@@ -52,8 +53,8 @@ async def tests_5():
                 await tc.commit()
             try:
                 await bot.send_message(chat_id=i[0], text='Спасибо за подписку. \n А теперь ознакомься с лёгким заработком на написании отзывов и через 2 минуты вам придёт ссылка на вторую часть.\n Хорошего дня ❤️')
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
 def funcs_5():
     f = asyncio.get_event_loop()
