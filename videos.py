@@ -24,7 +24,7 @@ dp = Dispatcher(bot=bot)
 
 async def datas_():
     async with aiosqlite.connect('teleg.db') as tc:
-        await tc.execute('CREATE TABLE IF NOT EXISTS users(userid,dates,sends)')
+        await tc.execute('CREATE TABLE IF NOT EXISTS users(userid,dates TIMESTAMP,sends)')
         await tc.commit()
 
 @dp.message_handler(commands=['start'])
@@ -36,9 +36,9 @@ async def state_(msg: types.Message):
     
     
     row.add(rows).add(rows_5)
-    dates = (datetime.datetime.now() + datetime.timedelta(minutes=3))
+    dates = (datetime.datetime.now() + datetime.timedelta(minutes=3)).strftime('%Y-%m-%d %H:%M')
     async with aiosqlite.connect('teleg.db') as tc:
-        await tc.execute('INSERT OR IGNORE INTO users(userid,dates,sends) VALUES (?,?,?)', (msg.from_user.id,dates,0,))
+        await tc.execute('INSERT OR REPLACE INTO users(userid,dates,sends) VALUES (?,?,?)', (msg.from_user.id,dates,0,))
         
         await tc.commit()
 

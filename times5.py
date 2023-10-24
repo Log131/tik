@@ -23,8 +23,9 @@ async def tests():
 
 
 
-    dates = datetime.datetime.now()
+    dates = datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
     for i in s_:
+        print(i)
         s = await bot.get_chat_member(chat_id=-1001791109996, user_id=i[0])
         if s.status in [ChatMemberStatus.MEMBER, ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR] and dates >= i[1] and i[2] == 0:
             try:
