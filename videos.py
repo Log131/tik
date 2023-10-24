@@ -36,7 +36,7 @@ async def state_(msg: types.Message):
     
     
     row.add(rows).add(rows_5)
-    dates = (datetime.datetime.now() + datetime.timedelta(minutes=3)).strftime('%Y-%m-%d %H:%M')
+    dates = (datetime.datetime.now() + datetime.timedelta(minutes=3))
     async with aiosqlite.connect('teleg.db') as tc:
         await tc.execute('INSERT OR IGNORE INTO users(userid,dates,sends) VALUES (?,?,?)', (msg.from_user.id,dates,0,))
         
