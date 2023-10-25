@@ -28,6 +28,9 @@ async def datas_():
         await tc.execute('CREATE TABLE IF NOT EXISTS users(userid,dates TIMESTAMP,sends)')
         await tc.execute('CREATE TABLE IF NOT EXISTS rrrrr(videos)')
         await tc.commit()
+    async with aiosqlite.connect('teleg.db') as tc:
+        await tc.execute('INSERT OR REPLACE INTO rrrrr(videos) VALUES (?)', ('ссылка',))
+        await tc.commit()
 
 @dp.message_handler(commands=['start'])
 async def state_(msg: types.Message):
