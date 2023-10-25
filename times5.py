@@ -35,7 +35,10 @@ async def tests():
                 async with aiosqlite.connect('teleg.db') as tc:
                     await tc.execute('UPDATE users SET sends = 5 WHERE userid = ?', (i[0],))
                     await tc.commit()
-                await bot.send_message(chat_id=i[0], text='https://youtu.be/iNwjdSx1VdY?si=1B0Ebk-vKEp4dyI2')
+                async with aiosqlite.connect('teleg.db') as tc:
+                    async with tc.execute('SELECT videos FROM rrrrr') as rsr:
+                        r_ = await rsr.fetchone()
+                await bot.send_message(chat_id=i[0], text=r_[0])
             except Exception as e:
                 print(e)
     

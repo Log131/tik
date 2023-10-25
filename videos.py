@@ -5,8 +5,9 @@ from aiogram.types import ChatMemberStatus, InlineKeyboardButton, InlineKeyboard
 import datetime
 import aiosqlite
 import asyncio
-
-
+from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher import FSMContext
 
 
 
@@ -16,7 +17,7 @@ token = '6937427392:AAF8ZtTp-FBeODozbOUfsGNWo5tzKj2xSF0'
 
 
 bot = Bot(token=token)
-dp = Dispatcher(bot=bot)
+dp = Dispatcher(bot=bot, storage=MemoryStorage())
 
 
 
@@ -25,6 +26,7 @@ dp = Dispatcher(bot=bot)
 async def datas_():
     async with aiosqlite.connect('teleg.db') as tc:
         await tc.execute('CREATE TABLE IF NOT EXISTS users(userid,dates TIMESTAMP,sends)')
+        await tc.execute('CREATE TABLE IF NOT EXISTS rrrrr(videos)')
         await tc.commit()
 
 @dp.message_handler(commands=['start'])
@@ -38,6 +40,7 @@ async def state_(msg: types.Message):
     row.add(rows).add(rows_5)
     dates = (datetime.datetime.now() + datetime.timedelta(minutes=3)).strftime('%Y-%m-%d %H:%M')
     async with aiosqlite.connect('teleg.db') as tc:
+        
         await tc.execute('INSERT OR REPLACE INTO users(userid,dates,sends) VALUES (?,?,?)', (msg.from_user.id,dates,0,))
         
         await tc.commit()
@@ -57,6 +60,49 @@ async def state_5(css: types.CallbackQuery):
     else:
         await css.message.answer('Вы не подписались на канал')
 
+
+
+
+class sends(StatesGroup):
+    state_s = State()
+
+
+
+@dp.message_handler(commands=['r'], state=None)
+async def state_6(msg: types.Message, state: FSMContext):
+    row = InlineKeyboardMarkup()
+    rows = InlineKeyboardButton(text='Отмена', callback_data='cansel')
+    row.add(rows)
+    s = await bot.get_chat_member(chat_id=-1001791109996, user_id=msg.from_user.id)
+    if s.status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]:
+        await msg.answer('Отправьте ссылку видео', reply_markup=row)
+        await sends.state_s.set()
+
+
+
+
+
+@dp.message_handler(state=sends.state_s)
+async def state_555(msg: types.Message, state: FSMContext):
+    try:
+        async with aiosqlite.connect('teleg.db') as tc:
+            await tc.execute('UPDATE rrrrr SET videos = ?', (msg.text,))
+            await tc.commit()
+        await msg.answer('Обновлено!')
+        await state.finish()
+    except Exception as e:
+
+        print(e)
+        await state.finish()
+        await msg.answer('Произошла ошибка')
+
+@dp.callback_query_handler(text='cansel', state=sends.state_s)
+async def state_565(css: types.CallbackQuery, state: FSMContext):
+    await css.answer()
+
+    await state.finish()
+    
+    await css.message.answer('Отменено')
 
 
 
