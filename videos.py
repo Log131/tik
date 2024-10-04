@@ -102,7 +102,7 @@ async def state_555(msg: types.Message, state: FSMContext):
 
 
 
-@dp.message_handler(commands=['r'], state=None)
+@dp.message_handler(commands=['s'], state=None)
 async def state_666(msg: types.Message, state: FSMContext):
     row = InlineKeyboardMarkup()
     rows = InlineKeyboardButton(text='Отмена', callback_data='cansel')
