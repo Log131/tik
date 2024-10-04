@@ -25,7 +25,7 @@ dp = Dispatcher(bot=bot, storage=MemoryStorage())
 
 async def datas_():
     async with aiosqlite.connect('teleg.db') as tc:
-        await tc.execute('CREATE TABLE IF NOT EXISTS users(userid,dates TIMESTAMP,sends)')
+        await tc.execute('CREATE TABLE IF NOT EXISTS users(userid PRIMARYKEY,dates TIMESTAMP,sends)')
         await tc.execute('CREATE TABLE IF NOT EXISTS rrrrr(videos)')
         await tc.commit()
     async with aiosqlite.connect('teleg.db') as tc:
