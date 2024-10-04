@@ -25,7 +25,7 @@ dp = Dispatcher(bot=bot, storage=MemoryStorage())
 
 async def datas_():
     async with aiosqlite.connect('teleg.db') as tc:
-        await tc.execute('CREATE TABLE IF NOT EXISTS users(userid PRIMARYKEY,dates TIMESTAMP,sends)')
+        await tc.execute('CREATE TABLE IF NOT EXISTS users(userid PRIMARY KEY,dates TIMESTAMP,sends)')
         await tc.execute('CREATE TABLE IF NOT EXISTS rrrrr(videos)')
         await tc.commit()
     async with aiosqlite.connect('teleg.db') as tc:
@@ -69,7 +69,8 @@ async def state_5(css: types.CallbackQuery):
 class sends(StatesGroup):
     state_s = State()
 
-
+class sends5(StatesGroup):
+    state_s5 = State()
 
 @dp.message_handler(commands=['r'], state=None)
 async def state_6(msg: types.Message, state: FSMContext):
@@ -92,6 +93,37 @@ async def state_555(msg: types.Message, state: FSMContext):
             await tc.execute('UPDATE rrrrr SET videos = ?', (msg.text,))
             await tc.commit()
         await msg.answer('Обновлено!')
+        await state.finish()
+    except Exception as e:
+
+        print(e)
+        await state.finish()
+        await msg.answer('Произошла ошибка')
+
+
+
+@dp.message_handler(commands=['r'], state=None)
+async def state_666(msg: types.Message, state: FSMContext):
+    row = InlineKeyboardMarkup()
+    rows = InlineKeyboardButton(text='Отмена', callback_data='cansel')
+    row.add(rows)
+    s = await bot.get_chat_member(chat_id=-1001791109996, user_id=msg.from_user.id)
+    if s.status in [ChatMemberStatus.ADMINISTRATOR, ChatMemberStatus.CREATOR]:
+        await msg.answer('Напишите текст рассылки', reply_markup=row)
+        await sends5.state_s5.set()
+
+@dp.message_handler(state=sends5.state_s5)
+async def state_55555(msg: types.Message, state: FSMContext):
+    try:
+        async with aiosqlite.connect('teleg.db') as tc:
+            async with tc.execute('SELECT user_id FROM users') as f:
+                s = await f.fetchall()
+            for i in s:
+                try:
+                    await bot.send_message(chat_id=i[0], text=msg.text)
+                except:
+                    pass
+        await msg.answer('Отправлено')
         await state.finish()
     except Exception as e:
 
